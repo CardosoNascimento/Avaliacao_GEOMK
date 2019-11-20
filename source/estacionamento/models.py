@@ -3,23 +3,13 @@ from datetime import datetime
 from cardosoteste.validators import *
 
 
-class Carro(models.Model):
-    placa = models.CharField(max_length=8, unique=True, validators=[placa_validator])
-
-    def __str__(self):
-        return f'{self.placa}'
-
-    def save(self, *args, **kwargs):
-        self.placa = str(self.placa).upper()
-        super(Carro, self).save(*args, **kwargs)
-
-
 class Estacionamento(models.Model):
-    placa = models.ForeignKey(Carro, on_delete=models.CASCADE, unique=False)
+    placa = models.CharField(max_length=8, validators=[placa_validator])
     tempo = models.CharField(max_length=30, default='0 minutos')
     pago = models.BooleanField(default=False)
     saiu = models.BooleanField(default=False)
-    chegada = models.DateTimeField(default=datetime.today())
+    entrada = models.DateTimeField(default=datetime.today())
+    saida = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         verbose_name_plural = 'Estacionamento'
@@ -33,9 +23,27 @@ class Estacionamento(models.Model):
                 error_messages['saiupagou!']
             )
         super(Estacionamento, self).clean(*args, **kwargs)
+
     def save(self, *args, **kwargs):
         agr = datetime.today()
-        anos = int(agr.year) - int(self.chegada.year)
-        meses = ((anos*12) + (agr.)
-
-        
+        if self.saiu and self.saida == None:
+            self.saida = datetime.today()
+            horas = int(self.saida.hour) - int(self.entrada.hour)
+            minutos = int(self.saida.minute) - int(self.entrada.minute)
+            tempo = ''
+            if horas == 0:
+                tempo = '{} minuto{}'.format(minutos, '' if minutos == 1 else 's')
+            else:
+                tempo = '{} hora{} e {} minutos'.format(horas, '' if horas == 1 else 's', minutos)
+            self.tempo = tempo
+        else:
+            horas = int(agr.hour) - int(self.entrada.hour)
+            minutos = int(agr.minute) - int(self.entrada.minute)
+            tempo = ''
+            if horas == 0:
+                tempo = '{} minuto{}'.format(minutos, '' if minutos == 1 else 's')
+            else:
+                tempo = '{} hora{} e {} minutos'.format(horas, '' if horas == 1 else 's', minutos)
+            self.tempo = tempo
+        self.placa = str(self.placa).upper()
+        super(Estacionamento, self).save(*args, **kwargs)

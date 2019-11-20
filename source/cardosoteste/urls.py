@@ -15,13 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from rest_framework import routers
-from estacionamento.api import viewset
-
-router = routers.DefaultRouter()
-router.register(r'estacionamento',viewset.EstacionamentoViewSet, base_name='Estacionamento')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include(router.urls))
+    path('api/', include('estacionamento.urls')),
 ]
