@@ -1,6 +1,10 @@
 from django.contrib import admin
 from .models import *
 
+@admin.register(Carro)
+class CarroAdmin(admin.ModelAdmin):
+    pass
+
 
 @admin.register(Estacionamento)
 class EstacionamentoAdmin(admin.ModelAdmin):

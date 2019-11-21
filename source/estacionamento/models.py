@@ -3,8 +3,19 @@ from datetime import datetime
 from cardosoteste.validators import *
 
 
-class Estacionamento(models.Model):
+class Carro(models.Model):
     placa = models.CharField(max_length=8, validators=[placa_validator])
+    
+    def __str__(self):
+        return f'{self.placa}'
+
+    def save(self, *args, **kwargs):
+        self.placa = str(self.placa).upper()
+        super(Carro, self).save(*args, **kwargs)
+
+         
+class Estacionamento(models.Model):
+    placa = models.ForeignKey(Carro, on_delete=models.CASCADE)
     tempo = models.CharField(max_length=30, default='0 minutos')
     pago = models.BooleanField(default=False)
     saiu = models.BooleanField(default=False)
@@ -45,5 +56,4 @@ class Estacionamento(models.Model):
             else:
                 tempo = '{} hora{} e {} minutos'.format(horas, '' if horas == 1 else 's', minutos)
             self.tempo = tempo
-        self.placa = str(self.placa).upper()
         super(Estacionamento, self).save(*args, **kwargs)
