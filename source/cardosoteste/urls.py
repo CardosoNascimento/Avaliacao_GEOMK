@@ -16,12 +16,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from estacionamento import views
+from parking import views
 
 router = routers.DefaultRouter()
-router.register(r'estacionamento', views.EstacionamentoView, base_name='Estacionamento')
+# router.register(r'parking', views.parkingView, base_name='parking')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include(router.urls)),
+    path('api/', include('parking.urls')),
 ]
