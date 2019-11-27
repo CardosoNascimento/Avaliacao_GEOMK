@@ -6,13 +6,9 @@ error_messages = {
     'saiupagou!': _('Não pode haver saída sem pagamento.')
 }
 
-#validação de formato AAA-9999
 def placa_validator(value):
-    #Variável que validará se o tamanho da string e a posição hífen estão válidos
     tamanho_hifen = False
-    #Variavel que validará que só há letras antes do hífen
     letras = False
-    #Variável que validará que só há números depois do hífen
     numeros = True
     try:
         if str(value)[3] == '-' and len(str(value)) == 8:

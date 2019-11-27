@@ -5,7 +5,7 @@ from cardosoteste.validators import *
 
 class Car(models.Model):
     plate = models.CharField(max_length=8, validators=[placa_validator])
-    
+
     def __str__(self):
         return f'{self.plate}'
 
@@ -37,8 +37,8 @@ class Parking(models.Model):
 
     def save(self, *args, **kwargs):
         now = datetime.today()
-        # if self.left and not self.paid:
-        #     self.left = False
+        if self.left and not self.paid:
+            self.left = False
         if self.left and self.saida == None:
             minutos_saida = int(now.hour * 60 + now.minute)
             minutos_entrada = int(self.entrada.hour * 60 + self.entrada.minute)
