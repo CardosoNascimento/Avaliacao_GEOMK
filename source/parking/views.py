@@ -2,9 +2,24 @@
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from .models import *
-from .serializers import ParkingSerializer, HistoricoSerializer
+from .serializers import ParkingSerializer, HistoricoSerializer, PlateSerializer
 from rest_framework.response import Response
 from rest_framework import status
+
+
+class PlateView(APIView):
+
+    def get(self, request):
+        plate = Parking.objects.all()
+        serializer = PlateSerializer(plate, many=True)
+        return Response({"plate": serializer.data})
+
+    def post(self, request):
+        serializer = PlateSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Reponse(serializer.data, status=status.HTTP_201_CREATED)        
+        return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ParkingView(APIView):
@@ -14,7 +29,7 @@ class ParkingView(APIView):
         serializer = ParkingSerializer(parking, many=True)
         return Response({"parking": serializer.data})
 
-    def post(self, request, format=None):
+    def post(self, request):
         serializer = ParkingSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -41,8 +56,8 @@ class SairView(APIView):
         else:
             parking.left = True
             parking.save()
-            serializer = ParkingSerializer(parking, many=False)
-            return Response({"{} saiu".format(parking.plate): serializer.data})
+            serializer = ParkingSerializer(parking)
+            return Response({"'{}' saiu".format(parking.plate): serializer.data})
 
     
 class PagarView(APIView):
@@ -51,5 +66,5 @@ class PagarView(APIView):
         parking = list(Parking.objects.filter(id=pk))[0]    
         parking.paid = True
         parking.save()
-        serializer = ParkingSerializer(parking, many=False)
-        return Response({"Pago": serializer.data})
+        serializer = ParkingSerializer(parking)
+        return Response({"'{}' pago".format(parking.plate): serializer.data})
