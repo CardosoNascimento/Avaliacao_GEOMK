@@ -7,6 +7,12 @@ from rest_framework.response import Response
 from rest_framework import status
 
 
+class APIView(APIView):
+
+    def get(self, request):
+        return Response({"http://127.0.0.1:8008/api/parking/, http://127.0.0.1:8008/api/parking/plate/"})
+
+
 class PlateView(APIView):
 
     def get(self, request):
@@ -30,6 +36,20 @@ class ParkingView(APIView):
         return Response({"parking": serializer.data})
 
     def post(self, request):
+        serializer = ParkingSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class SingleParkingView(APIView):
+
+    def get(self, request, pk):
+        parking = Parking.objects.get(id=pk)
+        serializer = ParkingSerializer(parking)
+        return Response({"parking": serializer.data})
+
+    def post(self, request, pk):
         serializer = ParkingSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
